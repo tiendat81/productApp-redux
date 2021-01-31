@@ -1,11 +1,12 @@
 import { Box } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import productApi from '../../../api/productApi';
 import { addToCart } from '../../Cart/cartSlice';
-import Loading from '../components/Loading';
-import Product from '../components/Product';
+
+const Loading = lazy(() => import('../components/Loading'));
+const Product = lazy(() => import('../components/Product'));
 
 function ProductDetailPage() {
   const { params } = useRouteMatch();
@@ -46,16 +47,18 @@ function ProductDetailPage() {
 
   return (
     <Box>
-      {loading && <Loading />}
-      {product && (
-        <Product
-          product={product}
-          addToCart={handleAddToCart}
-          increaseProduct={handleIncreaseCounterProduct}
-          decreaseProduct={handleDecreaseCounterProduct}
-          productQuantity={counterProduct}
-        />
-      )}
+      <Suspense fallback={<div>Loading...</div>}>
+        {loading && <Loading />}
+        {product && (
+          <Product
+            product={product}
+            addToCart={handleAddToCart}
+            increaseProduct={handleIncreaseCounterProduct}
+            decreaseProduct={handleDecreaseCounterProduct}
+            productQuantity={counterProduct}
+          />
+        )}
+      </Suspense>
     </Box>
   );
 }

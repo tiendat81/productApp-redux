@@ -1,9 +1,10 @@
-import React from 'react';
 import Badge from '@material-ui/core/Badge';
-import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import React from 'react';
 import { useSelector } from 'react-redux';
+import { itemCountSelector } from '../../selectors';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -15,13 +16,11 @@ const StyledBadge = withStyles((theme) => ({
 }))(Badge);
 
 export default function CustomizedCart() {
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  //   const item = cartItems.length();
-  console.log(cartItems);
+  const itemCount = useSelector(itemCountSelector);
 
   return (
     <IconButton aria-label="cart">
-      <StyledBadge badgeContent={cartItems.length} color="secondary">
+      <StyledBadge badgeContent={itemCount} color="secondary">
         <ShoppingCartIcon />
       </StyledBadge>
     </IconButton>

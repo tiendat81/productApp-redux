@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   container: {},
 
   // button add new product section
-  topActions: {
+  sortBtnGroup: {
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: '1rem',
@@ -30,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
 
   button: {
     border: 'none',
+    textTransform: 'none',
+    marginLeft: '1rem',
   },
 
   addProduct: {
@@ -46,13 +48,15 @@ const useStyles = makeStyles((theme) => ({
   leftMenu: {
     width: '20%',
     borderRadius: '5px',
-    backgroundColor: '#f0f5f5',
+    // backgroundColor: '#f0f5f5',
     minHeight: '500px',
   },
+
   category: {
     padding: '1rem .5rem',
     borderBottom: '2px solid  rgb(153, 204, 255)',
   },
+
   shipping: {
     padding: '1rem .5rem',
     borderBottom: '2px solid  rgb(153, 204, 255)',
@@ -104,6 +108,8 @@ ProductList.propTypes = {
   sortDescending: PropTypes.func,
   isAscending: PropTypes.bool,
   isDescending: PropTypes.bool,
+  onEdit: PropTypes.func,
+  onRemove: PropTypes.func,
 };
 
 ProductList.defaultProps = {
@@ -113,6 +119,8 @@ ProductList.defaultProps = {
   sortDescending: null,
   isAscending: false,
   isDescending: false,
+  onEdit: null,
+  onRemove: null,
 };
 
 function ProductList(props) {
@@ -124,6 +132,8 @@ function ProductList(props) {
     sortDescending,
     isAscending,
     isDescending,
+    onEdit,
+    onRemove,
   } = props;
 
   const sortProductDescending = () => {
@@ -136,16 +146,16 @@ function ProductList(props) {
 
   return (
     <Container className={classes.container}>
-      <Box className={classes.topActions}>
+      <Box className={classes.sortBtnGroup}>
         <Box>
-          Sort by price
+          Sort by
           <Button
             className={classes.button}
             color="primary"
             variant={isAscending ? 'contained' : 'outlined'}
             onClick={sortProductAscending}
           >
-            Low to hight
+            Oldest
           </Button>
           <Button
             className={classes.button}
@@ -153,10 +163,16 @@ function ProductList(props) {
             variant={isDescending ? 'contained' : 'outlined'}
             onClick={sortProductDescending}
           >
-            Hight to low
+            Newest
           </Button>
         </Box>
-        <Link to="products/addProduct" className={classes.addProduct}>
+        <Link
+          to={{
+            pathname: '/products/addEditProduct',
+            state: { addMode: true },
+          }}
+          className={classes.addProduct}
+        >
           <Button color="primary" startIcon={<Add />} onClick={handleAddClick}>
             Add new product
           </Button>
@@ -201,16 +217,32 @@ function ProductList(props) {
                             component="h2"
                             className={classes.price}
                           >
-                            {product.originalPrice}
+                            {product.originalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
                           </Typography>
                         </CardContent>
                       </Link>
                     </CardActionArea>
                     <CardActions className={classes.editDeleteActions}>
-                      <Button size="small" color="primary">
-                        Edit
-                      </Button>
-                      <Button size="small" color="primary">
+                      <Link
+                        style={{ textDecoration: 'none' }}
+                        to={{
+                          pathname: '/products/addEditProduct',
+                          state: { product, editMode: true },
+                        }}
+                      >
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => onEdit && onEdit(product)}
+                        >
+                          Edit
+                        </Button>
+                      </Link>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => onRemove && onRemove(product)}
+                      >
                         Delete
                       </Button>
                     </CardActions>

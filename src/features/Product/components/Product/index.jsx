@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme) => ({
 
   mainContent: {
     width: '60%',
+    marginLeft: '10px',
     borderRadius: '5px',
-    backgroundColor: '#f0f5f5',
+    // backgroundColor: '#f0f5f5',
   },
 }));
 
@@ -61,7 +62,7 @@ function Product(props) {
   };
 
   return (
-    <Container>
+    <Container style={{ backgroundColor: 'white' }}>
       <Box className={classes.container}>
         <Box className={classes.leftContent}>
           <Box className={classes.root}>
@@ -84,12 +85,10 @@ function Product(props) {
               <Typography color="textSecondary" gutterBottom>
                 {product.name}
               </Typography>
-              <Typography variant="h5" component="h2">
-                {product.name}
-              </Typography>
+
               <Typography color="textSecondary"></Typography>
               <Typography variant="body2" component="p">
-                {product.salePrice}
+                {product.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
               </Typography>
             </CardContent>
           </Card>

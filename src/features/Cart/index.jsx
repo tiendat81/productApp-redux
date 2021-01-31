@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNewFromCart, removeAllFromCart, removeFromCart } from './cartSlice';
+import { totalSelector } from './selectors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -10,11 +11,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '3rem',
   },
   productSummary: {
-    width: '80%',
+    width: '70%',
   },
   productCash: {
-    width: '20%',
-    backgroundColor: 'goldenrod',
+    marginLeft: '20px',
+    width: '30%',
+    backgroundColor: 'rgb(239, 239, 239)',
 
     padding: '10px',
 
@@ -26,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    backgroundColor: 'silver',
+    backgroundColor: 'rgb(239, 239, 239)',
     borderRadius: '3px',
     minHeight: '100px',
   },
@@ -39,9 +41,8 @@ const useStyles = makeStyles((theme) => ({
 function CartFeature() {
   const classes = useStyles();
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const totalAmount = useSelector(totalSelector);
   const dispatch = useDispatch();
-  console.log('cart: ', cartItems);
 
   const handleDecreaseItem = (product) => {
     const action = removeFromCart(product);
@@ -70,11 +71,15 @@ function CartFeature() {
                 src={item.product.images[0]}
               ></Box>
             </Box>
-            <Box>{item.product.name}</Box>
-            <Button onClick={() => handleRemoveAllFromCart(item)}>Remove</Button>
+            <Box>
+              <Box>{item.product.name}</Box>
+              <Button onClick={() => handleRemoveAllFromCart(item)}>Remove</Button>
+            </Box>
 
             <Box>
-              <Typography>{item.product.originalPrice}</Typography>
+              <Typography>
+                {item.product.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+              </Typography>
               <ButtonGroup color="primary" aria-label="outlined primary button group">
                 <Button disabled={item.quantity === 1} onClick={() => handleDecreaseItem(item)}>
                   -

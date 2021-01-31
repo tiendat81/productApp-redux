@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, TextField } from '@material-ui/core';
 import { Controller } from 'react-hook-form';
-import _get from 'lodash.get';
 
 InputField.propTypes = {
   name: PropTypes.string.isRequired,
@@ -11,29 +10,27 @@ InputField.propTypes = {
   label: PropTypes.string,
   disabled: PropTypes.bool,
   type: PropTypes.string,
-  defaultValue: PropTypes.string,
+  inputProps: PropTypes.object,
 };
 
 InputField.defaultProps = {
   label: '',
   disabled: false,
   type: '',
-  defaultValue: '',
+  inputProps: {},
 };
 
 function InputField(props) {
-  const { name, label, form, disabled, type, defaultValue } = props;
+  const { name, label, form, disabled, type, inputProps } = props;
   const { errors } = form;
-  const errorMessage = _get(errors, `${name}.message`);
+  const errorMessage = errors[name]?.message;
   const hasError = !!errorMessage;
-  console.log({ errors });
 
   return (
     <Box mt={1} mb={2}>
       <Controller
         name={name}
         control={form.control}
-        defaultValue={defaultValue}
         render={({ value, onChange, onBlur }) => (
           <TextField
             fullWidth
@@ -47,6 +44,7 @@ function InputField(props) {
             variant="outlined"
             error={hasError}
             helperText={errorMessage}
+            inputProps={inputProps}
           />
         )}
       />

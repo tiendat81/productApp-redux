@@ -35,7 +35,6 @@ function AddEdit(props) {
     if (isAdd) {
       // convert array object images to single array
       const listImage = formValues?.images ? formValues?.images.map((image) => image.image) : null;
-      console.log('listImage ', listImage);
 
       let payload = {
         id: new Date().getTime().toString(),
@@ -53,9 +52,6 @@ function AddEdit(props) {
         categoryId: DEFAULT_CATEGORY_ID,
       };
       await productApi.add(payload);
-
-      console.log('add product formValues', formValues);
-      console.log('add product payload', payload);
       return;
     }
 

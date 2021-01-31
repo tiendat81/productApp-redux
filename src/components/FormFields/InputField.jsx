@@ -26,7 +26,6 @@ function InputField(props) {
   const { errors } = form;
   const errorMessage = _get(errors, `${name}.message`);
   const hasError = !!errorMessage;
-  console.log({ errors });
 
   return (
     <Box mt={1} mb={2}>

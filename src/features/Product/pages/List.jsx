@@ -1,26 +1,20 @@
-import { Box, Container } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { Box, Container, Tooltip } from '@material-ui/core';
+import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import productApi from '../../../api/productApi';
+import AlertDialog from '../components/AlertDialog';
+import SearchForm from '../components/SeachForm';
 
 const Loading = lazy(() => import('../components/Loading'));
 const ProductPagination = lazy(() => import('../components/Pagination'));
 const ProductList = lazy(() => import('../components/ProductList'));
 
-const useStyles = makeStyles((theme) => ({
-  pagination: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-}));
-
 function ProductListPage() {
-  const classes = useStyles();
-
+  const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [productList, setProductList] = useState([]);
-  const [isAscending, setIsAscending] = useState(false);
-  const [isDescending, setIsDescending] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const [pagination, setPagination] = useState({
     _page: 1,
@@ -29,8 +23,8 @@ function ProductListPage() {
   });
 
   const [filters, setFilters] = useState({
-    _limit: 8,
     _page: 1,
+    _limit: 8,
     _sort: 'createdAt',
     _order: 'desc',
   });
@@ -43,24 +37,10 @@ function ProductListPage() {
       ...filters,
       _page: newPage,
     });
-  };
-
-  const handleSortDescending = async () => {
-    setFilters({
-      ...filters,
-      _order: 'desc',
-    });
-    setIsDescending(true);
-    setIsAscending(false);
-  };
-
-  const handleSortAscending = () => {
-    setFilters({
-      ...filters,
-      _order: 'asc',
-    });
-    setIsDescending(false);
-    setIsAscending(true);
+    // history.push(
+    //   `/products/_page=${newPage}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
+    // );
+    // history.push(`/products/?_page=${newPage}`);
   };
 
   const handleEditClick = (product) => {
@@ -68,15 +48,25 @@ function ProductListPage() {
   };
 
   const handleRemoveClick = async (product) => {
+    setOpen(true);
     try {
-      const message = `Are you sure to remove product named "${product.name}"? 😭`;
-      if (window.confirm(message)) {
-        await productApi.remove(product.id);
-        setFilters((x) => ({ ...x }));
-      }
+      // const message = `Are you sure to remove product named "${product.name}"? 😭`;
+      // if (window.confirm(message)) {
+      //   // await productApi.remove(product.id);
+      //   setFilters((x) => ({ ...x }));
+      // }
     } catch (error) {
       console.log('Failed to remove product: ', error);
     }
+  };
+
+  const handleSearch = () => {};
+
+  const handleAddClick = () => {
+    history.push({
+      pathname: '/products/addEditProduct',
+      state: { addMode: true },
+    });
   };
 
   useEffect(() => {
@@ -96,34 +86,40 @@ function ProductListPage() {
   }, [filters]);
 
   return (
-    <Box>
+    <Container>
       <Suspense fallback={<div>Loading...</div>}>
         {loading ? (
           <Loading />
         ) : (
           <Box>
+            <Container>
+              <SearchForm onSubmit={handleSearch} />
+              <Box display="flex" justifyContent="flex-end">
+                <Tooltip title="Add a new product" placement="top">
+                  {<AddBoxOutlinedIcon fontSize="large" onClick={handleAddClick} />}
+                </Tooltip>
+              </Box>
+            </Container>
+
             <ProductList
               productList={productList}
-              onPageChange={handlePageChange}
-              sortAscending={handleSortAscending}
-              sortDescending={handleSortDescending}
-              isAscending={isAscending}
-              isDescending={isDescending}
               onEdit={handleEditClick}
               onRemove={handleRemoveClick}
             />
 
-            <Container className={classes.pagination}>
+            <AlertDialog open={open} />
+
+            <Box display="flex" justifyContent="center">
               <ProductPagination
-                count={totalPages}
-                page={pagination._page}
+                totalPages={totalPages}
+                currentPage={pagination._page}
                 onPageChange={handlePageChange}
               />
-            </Container>
+            </Box>
           </Box>
         )}
       </Suspense>
-    </Box>
+    </Container>
   );
 }
 

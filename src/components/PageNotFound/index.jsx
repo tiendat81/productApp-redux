@@ -1,8 +1,8 @@
-import { Box } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import React from 'react';
 
 function PageNotFound() {
-  return <Box>Page not found</Box>;
+  return <Container>404 - Page not found</Container>;
 }
 
 export default PageNotFound;

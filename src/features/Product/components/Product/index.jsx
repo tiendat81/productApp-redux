@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, CardActionArea, Container } from '@material-ui/core';
+import { Box, Button, ButtonGroup, CardActionArea, Container, Paper } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -6,6 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { currencyFormat } from 'utilities/currency';
+import Carousel from 'react-material-ui-carousel';
 
 Product.propTypes = {
   product: PropTypes.object,
@@ -27,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 500,
   },
-  cart: {},
 
   container: {
     display: 'flex',
@@ -62,36 +63,35 @@ function Product(props) {
   };
 
   return (
-    <Container style={{ backgroundColor: 'white' }}>
+    <Container>
       <Box className={classes.container}>
         <Box className={classes.leftContent}>
           <Box className={classes.root}>
             <Card>
               <CardActionArea>
-                <CardMedia
-                  component="img"
-                  alt="Contemplative Reptile"
-                  height="300"
-                  image={product.images[0]}
-                  title="Contemplative Reptile"
-                />
+                <Carousel animation="slide" autoPlay={false}>
+                  {product.images.map((image, i) => (
+                    <CardMedia
+                      key={i}
+                      component="img"
+                      alt="Image"
+                      height="300"
+                      image={image}
+                      title="Image"
+                    />
+                  ))}
+                </Carousel>
               </CardActionArea>
             </Card>
           </Box>
         </Box>
         <Box className={classes.mainContent}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                {product.name}
-              </Typography>
-
-              <Typography color="textSecondary"></Typography>
-              <Typography variant="body2" component="p">
-                {product.salePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
-              </Typography>
-            </CardContent>
-          </Card>
+          <Typography color="textSecondary" gutterBottom>
+            {product.name}
+          </Typography>
+          <Typography variant="body2" component="p">
+            {currencyFormat(product.salePrice)}đ
+          </Typography>
           <Box>
             <ButtonGroup color="primary" aria-label="outlined primary button group">
               <Button disabled={productQuantity === 1} onClick={onDecreaseProductClick}>

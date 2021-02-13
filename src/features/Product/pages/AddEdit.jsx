@@ -1,4 +1,4 @@
-import { Container, Typography } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import productApi from '../../../api/productApi';
 import ProductForm from '../components/ProductForm';
@@ -25,13 +25,14 @@ function AddEdit(props) {
         originalPrice: 0,
         salePrice: 0,
         images: [],
-        ...props.location.state?.product,
+        ...props.location?.state?.product,
       });
     }
-  }, [props.location.state?.product]);
+  }, [props.location?.state?.product]);
 
   const handleFormSubmit = async (formValues) => {
     const isAdd = !selectedProduct;
+
     if (isAdd) {
       // convert array object images to single array
       const listImage = formValues?.images ? formValues?.images.map((image) => image.image) : null;
@@ -60,7 +61,7 @@ function AddEdit(props) {
   };
 
   return (
-    <Container>
+    <Box m={5}>
       {props.location.state.addMode && (
         <Typography component="h2" variant="h5">
           Add new product
@@ -74,7 +75,7 @@ function AddEdit(props) {
       )}
 
       <ProductForm onSubmit={handleFormSubmit} initialValues={selectedProduct} />
-    </Container>
+    </Box>
   );
 }
 

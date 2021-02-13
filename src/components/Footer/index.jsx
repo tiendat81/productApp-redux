@@ -3,8 +3,8 @@ import React from 'react';
 
 function Footer() {
   return (
-    <Box textAlign="center" mt="2rem" mb="2rem">
-      © 2020 - Sản phẩm demo
+    <Box textAlign="center" mt="2rem">
+      ©2021 All Rights Reserverd. This template is made with ❤ by React
     </Box>
   );
 }

@@ -10,11 +10,9 @@ const Product = lazy(() => import('../components/Product'));
 
 function ProductDetailPage() {
   const { params } = useRouteMatch();
-
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [counterProduct, setCounterProduct] = useState(1);
-
   const dispatch = useDispatch();
 
   useEffect(() => {

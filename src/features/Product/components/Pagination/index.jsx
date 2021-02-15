@@ -5,15 +5,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 ProductPagination.propTypes = {
-  count: PropTypes.number.isRequired,
-  page: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  currentPage: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
 };
 
 ProductPagination.defaultProps = {
-  count: 1,
-  onChange: null,
-  page: null,
+  totalPages: 1,
+  onPageChange: null,
+  currentPage: null,
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProductPagination({ count, onPageChange, page }) {
+function ProductPagination({ totalPages, onPageChange, currentPage }) {
   const classes = useStyles();
 
   const handlePageChange = (newPage) => {
@@ -38,8 +38,8 @@ function ProductPagination({ count, onPageChange, page }) {
   return (
     <Box className={classes.root}>
       <Pagination
-        count={count}
-        page={page}
+        count={totalPages}
+        page={currentPage}
         color="primary"
         onChange={(e, page) => handlePageChange(page)}
       />

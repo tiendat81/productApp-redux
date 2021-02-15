@@ -1,4 +1,5 @@
 import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller } from 'react-hook-form';
@@ -22,7 +23,19 @@ SelectField.defaultProps = {
   disabled: false,
 };
 
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
+
 function SelectField(props) {
+  const classes = useStyles();
+
   const { name, label, form, disabled, options } = props;
   const { errors } = form;
   const errorMessage = errors[name]?.message;
@@ -30,9 +43,8 @@ function SelectField(props) {
 
   return (
     <Box mt={1} mb={2}>
-      <FormControl variant="outlined" error={hasError}>
+      <FormControl variant="outlined" error={hasError} className={classes.formControl}>
         <InputLabel id={name}>{label}</InputLabel>
-
         <Controller
           name={name}
           control={form.control}
@@ -53,7 +65,6 @@ function SelectField(props) {
             </Select>
           )}
         />
-
         <FormHelperText>{errorMessage}</FormHelperText>
       </FormControl>
     </Box>

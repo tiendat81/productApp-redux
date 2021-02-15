@@ -1,10 +1,13 @@
 import { Box } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
+import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
-import Cart from 'features/Cart/components/Cart';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { itemCountSelector } from 'features/Cart/selectors';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Header() {
   const classes = useStyles();
+  const itemCount = useSelector(itemCountSelector);
 
   return (
     <Box className={classes.root}>
@@ -50,7 +54,11 @@ function Header() {
             <Button color="inherit">Product</Button>
           </NavLink>
           <NavLink to="/cart" className={classes.navLink}>
-            <Cart className={classes.cart} />
+            <Button color="inherit">
+              <Badge badgeContent={itemCount} color="secondary">
+                <ShoppingCartIcon />
+              </Badge>
+            </Button>
           </NavLink>
         </Toolbar>
       </AppBar>

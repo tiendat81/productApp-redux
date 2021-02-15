@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
+  salePrice: {
+    fontWeight: 'bold',
+    fontSize: '16px',
+  },
 }));
 
 ProductList.propTypes = {
@@ -89,8 +93,9 @@ function ProductList(props) {
                   </Typography>
                 </CardContent>
               </CardActionArea>
-              <Box variant="h5" component="h2" pl={2}>
-                {currencyFormat(product.originalPrice)}
+              <Box pl={2}>
+                <span className={classes.salePrice}>{currencyFormat(product.salePrice)} ₫</span>
+                {product.promotionPercent > 0 && <span> -{product.promotionPercent}%</span>}
               </Box>
               <CardActions>
                 <Button size="small" color="primary" onClick={() => onEditProduct(product)}>

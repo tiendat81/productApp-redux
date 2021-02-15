@@ -4,11 +4,25 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
+import PropTypes from 'prop-types';
 import React from 'react';
 
-function AlertDialog({ open, onClose }) {
+AlertDialog.propTypes = {
+  open: PropTypes.bool,
+  onAccept: PropTypes.func,
+  onClose: PropTypes.func,
+};
+
+AlertDialog.defaultProps = {
+  open: false,
+  onAccept: null,
+  onClose: null,
+};
+
+function AlertDialog({ open, onAccept, onClose }) {
   const handleClose = () => {
-    onClose(false);
+    onClose && onClose();
   };
 
   return (
@@ -19,19 +33,21 @@ function AlertDialog({ open, onClose }) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          <WarningRoundedIcon />
+          {'Warning!'}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous location data to
-            Google, even when no apps are running.
+            Are you sure to remove the product?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            Disagree
+            Cancel
           </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
-            Agree
+          <Button onClick={() => onAccept && onAccept()} color="primary" autoFocus>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

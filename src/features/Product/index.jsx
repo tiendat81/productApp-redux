@@ -14,7 +14,6 @@ function ProductFeature() {
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Route exact path={match.path} component={ProductListPage} />
-          {/* <Route path={`${match.path}/?_page=:page`} component={ProductListPage} /> */}
           <Route path={`${match.path}/addEditProduct`} component={AddEdit} />
           <Route path={`${match.path}/:productId`} component={ProductDetailPage} />
         </Switch>

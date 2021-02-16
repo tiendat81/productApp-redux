@@ -3,6 +3,7 @@ import { Box, Button } from '@material-ui/core';
 import ImageField from 'components/FormFields/ImageField';
 import InputField from 'components/FormFields/InputField';
 import InputNumberField from 'components/FormFields/InputNumberField';
+import RadioField from 'components/FormFields/RadioField';
 import TextAreaField from 'components/FormFields/TextAreaField';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
@@ -36,6 +37,14 @@ function ProductForm({ initialValues, onSubmit }) {
       .typeError('Sale price must be a number')
       .positive('Sale price must be greater than zero')
       .required('Sale price is required'),
+    isPromotion: yup.string(),
+    promotionPercent: yup
+      .number()
+      .max(100, 'Promotion Percent must be less than or equal to 100')
+      .typeError('Promotion Percent must be a number')
+      .positive('Promotion Percent must be equal or greater than zero')
+      .required('Promotion Percent is required'),
+    isFreeShip: yup.string(),
     images: yup.array().of(
       yup.object().shape({
         image: yup
@@ -54,6 +63,9 @@ function ProductForm({ initialValues, onSubmit }) {
       description: '',
       originalPrice: 0,
       salePrice: 0,
+      isPromotion: '0',
+      promotionPercent: 0,
+      isFreeShip: 'false',
       images: [],
     },
     resolver: yupResolver(schema),
@@ -62,17 +74,27 @@ function ProductForm({ initialValues, onSubmit }) {
   const { setValue } = form;
 
   useEffect(() => {
+    const convertFlatImageArrayToArrayObj = () => {
+      let imageList = [];
+      imageList = initialValues.images.map((image) => ({ image: image }));
+      return imageList;
+    };
+
     setValue('name', initialValues ? initialValues.name : '');
     setValue('shortDescription', initialValues?.shortDescription || '');
     setValue('description', initialValues?.description || '');
     setValue('originalPrice', initialValues?.originalPrice || 0);
     setValue('salePrice', initialValues?.salePrice || 0);
-    setValue('images', initialValues?.images || []);
+    setValue('promotionPercent', initialValues?.promotionPercent || 0);
+    setValue('isPromotion', initialValues?.isPromotion.toString() || '0');
+    setValue('isFreeShip', initialValues?.isFreeShip.toString() || 'false');
+    setValue('images', initialValues?.images ? convertFlatImageArrayToArrayObj() : [{}]);
   }, [initialValues, setValue]);
 
   const handleFormSubmit = async (values) => {
     if (onSubmit) {
       await onSubmit(values);
+      form.reset();
     }
   };
 
@@ -111,7 +133,35 @@ function ProductForm({ initialValues, onSubmit }) {
         label="Sale price"
         form={form}
       />
+      <InputNumberField
+        name="promotionPercent"
+        type="number"
+        inputProps={{
+          min: '0',
+          max: '100',
+        }}
+        label="Promotion Percent"
+        form={form}
+      />
       <ImageField name="images" label="Image" form={form} />
+      <RadioField
+        name="isPromotion"
+        label="Promotion"
+        form={form}
+        options={[
+          { value: '1', label: 'Yes' },
+          { value: '0', label: 'No' },
+        ]}
+      />
+      <RadioField
+        name="isFreeShip"
+        label="Free Shipping"
+        form={form}
+        options={[
+          { value: 'true', label: 'Yes' },
+          { value: 'false', label: 'No' },
+        ]}
+      />
       <Button
         disabled={isSubmitting || !isValid || isValidating}
         type="submit"

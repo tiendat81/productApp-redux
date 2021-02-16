@@ -24,6 +24,9 @@ function AddEdit(props) {
         description: '',
         originalPrice: 0,
         salePrice: 0,
+        isPromotion: '0',
+        promotionPercent: 0,
+        isFreeShip: 'false',
         images: [],
         ...props.location?.state?.product,
       });
@@ -32,11 +35,12 @@ function AddEdit(props) {
 
   const handleFormSubmit = async (formValues) => {
     const isAdd = !selectedProduct;
+    // convert array object form field array images to single array for consistent with api
+    const listImage = formValues.images
+      ? formValues.images.map((image) => image.image)
+      : DEFAULT_IMAGES;
 
     if (isAdd) {
-      // convert array object images to single array
-      const listImage = formValues?.images ? formValues?.images.map((image) => image.image) : null;
-
       let payload = {
         id: new Date().getTime().toString(),
         name: formValues.name,
@@ -44,10 +48,12 @@ function AddEdit(props) {
         description: formValues.description,
         originalPrice: formValues.originalPrice,
         salePrice: formValues.salePrice,
-        isPromotion: 0,
-        promotionPercent: 0,
-        images: listImage || DEFAULT_IMAGES,
-        isFreeShip: false,
+        promotionPercent: formValues.promotionPercent,
+        // due to RadioField return string so that I have to parse to workaround
+        isFreeShip: formValues.isFreeShip === 'false' ? false : true,
+        // due to RadioField return string so that I have to parse to workaround
+        isPromotion: parseInt(formValues.isPromotion),
+        images: listImage,
         createdAt: new Date().getTime().toString(),
         updatedAt: new Date().getTime().toString(),
         categoryId: DEFAULT_CATEGORY_ID,
@@ -56,8 +62,27 @@ function AddEdit(props) {
       return;
     }
 
-    // todo : edit product
-    console.log('edit form', formValues);
+    // Edit mode
+    try {
+      let payload = {
+        id: selectedProduct.id,
+        name: formValues.name,
+        shortDescription: formValues.shortDescription,
+        description: formValues.description,
+        originalPrice: formValues.originalPrice,
+        salePrice: formValues.salePrice,
+        promotionPercent: formValues.promotionPercent,
+        // due to RadioField return string so that I have to parse to workaround
+        isFreeShip: formValues.isFreeShip === 'false' ? false : true,
+        // due to RadioField return string so that I have to parse to workaround
+        isPromotion: parseInt(formValues.isPromotion),
+        images: listImage,
+      };
+      await productApi.update(payload);
+      selectedProduct(null);
+    } catch (error) {
+      console.log('Failed to update product', error);
+    }
   };
 
   return (

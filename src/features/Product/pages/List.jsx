@@ -44,9 +44,9 @@ function ProductListPage() {
       _page: newPage,
     });
     // history.push(
-    //   `/products/_page=${newPage}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
+    //   `/products?_page=${newPage}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
     // );
-    // history.push(`/products/?_page=${newPage}`);
+    // history.push(`/products?_page=${newPage}`);
   };
 
   const handleEditClick = (product) => {
@@ -72,7 +72,14 @@ function ProductListPage() {
     }
   };
 
-  const handleSearch = () => {};
+  const handleSearch = (searchTerm) => {
+    console.log('searchTerm: ', searchTerm);
+    setFilters({
+      _page: 1,
+      _s: searchTerm.search,
+    });
+    // history.push(`/products/?_page=1&s=${searchTerm.search}`);
+  };
 
   const handleAddClick = () => {
     history.push({
@@ -105,6 +112,9 @@ function ProductListPage() {
       priceHighToLow: false,
       priceLowToHigh: true,
     });
+    // history.push(
+    //   `/products?_page=${filters._page}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
+    // );
   };
 
   const handleSortPriceHighToLow = () => {

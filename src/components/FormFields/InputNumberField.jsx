@@ -45,6 +45,7 @@ function InputField(props) {
             error={hasError}
             helperText={errorMessage}
             inputProps={inputProps}
+            size="small"
           />
         )}
       />

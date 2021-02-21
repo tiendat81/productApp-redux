@@ -1,20 +1,20 @@
 import { Box, Button, ButtonGroup, Container, Tooltip } from '@material-ui/core';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import productApi from '../../../api/productApi';
 
 const AlertDialog = lazy(() => import('../components/AlertDialog'));
 const SearchForm = lazy(() => import('../components/SeachForm'));
-const Loading = lazy(() => import('../components/Loading'));
+const Loading = lazy(() => import('components/Loading'));
 const ProductPagination = lazy(() => import('../components/Pagination'));
 const ProductList = lazy(() => import('../components/ProductList'));
 
 function ProductListPage() {
-  const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [productList, setProductList] = useState([]);
   const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState({ search: '' });
   const [variant, setVariant] = useState({
     newest: true,
     priceHighToLow: false,
@@ -43,14 +43,6 @@ function ProductListPage() {
       ...filters,
       _page: newPage,
     });
-    // history.push(
-    //   `/products?_page=${newPage}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
-    // );
-    // history.push(`/products?_page=${newPage}`);
-  };
-
-  const handleEditClick = (product) => {
-    console.log(`Product to be edit ${product}`);
   };
 
   const handleRemoveClick = async (product) => {
@@ -73,18 +65,13 @@ function ProductListPage() {
   };
 
   const handleSearch = (searchTerm) => {
-    console.log('searchTerm: ', searchTerm);
+    console.log(searchTerm);
     setFilters({
       _page: 1,
-      _s: searchTerm.search,
+      q: searchTerm.search,
     });
-    // history.push(`/products/?_page=1&s=${searchTerm.search}`);
-  };
-
-  const handleAddClick = () => {
-    history.push({
-      pathname: '/products/addEditProduct',
-      state: { addMode: true },
+    setSearchTerm({
+      search: searchTerm.search,
     });
   };
 
@@ -112,9 +99,6 @@ function ProductListPage() {
       priceHighToLow: false,
       priceLowToHigh: true,
     });
-    // history.push(
-    //   `/products?_page=${filters._page}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
-    // );
   };
 
   const handleSortPriceHighToLow = () => {
@@ -132,7 +116,6 @@ function ProductListPage() {
 
   useEffect(() => {
     setLoading(true);
-
     (async () => {
       try {
         const { data, pagination } = await productApi.getAll(filters);
@@ -154,7 +137,7 @@ function ProductListPage() {
         ) : (
           <Box>
             <Container>
-              <SearchForm onSubmit={handleSearch} />
+              <SearchForm onSubmit={handleSearch} initialValues={searchTerm} />
               <Box display="flex" justifyContent="center" mt={3} mb={3} flexWrap="wrap">
                 <Button disabled>Sort by: </Button>
                 <ButtonGroup color="primary" aria-label="outlined primary button group">
@@ -177,20 +160,18 @@ function ProductListPage() {
                     Price: Low to high
                   </Button>
                 </ButtonGroup>
-                <Tooltip title="Add a new product" placement="top">
-                  {<AddBoxOutlinedIcon fontSize="large" onClick={handleAddClick} />}
-                </Tooltip>
+                <Box>
+                  <Tooltip title="Add a new product" placement="top">
+                    <Link to={'/products/addEditProduct'} style={{ textDecoration: 'none' }}>
+                      {<AddBoxOutlinedIcon fontSize="large" />}
+                    </Link>
+                  </Tooltip>
+                </Box>
               </Box>
             </Container>
-
-            <ProductList
-              productList={productList}
-              onEdit={handleEditClick}
-              onRemove={handleRemoveClick}
-            />
-
+            <ProductList productList={productList} onRemove={handleRemoveClick} />
             <AlertDialog open={open} onAccept={handleRemoveSubmit} onClose={handleCloseDialog} />
-
+            {productList.length < 1 && <h5>No produect found</h5>}
             <Box display="flex" justifyContent="center">
               <ProductPagination
                 totalPages={totalPages}

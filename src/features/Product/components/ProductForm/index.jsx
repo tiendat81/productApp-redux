@@ -74,6 +74,7 @@ function ProductForm({ initialValues, onSubmit }) {
   const { setValue } = form;
 
   useEffect(() => {
+    // field array need an array object, but images return a flat array so that convert flat array to array object
     const convertFlatImageArrayToArrayObj = () => {
       let imageList = [];
       imageList = initialValues.images.map((image) => ({ image: image }));

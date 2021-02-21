@@ -1,8 +1,9 @@
 import { Box, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import productApi from '../../../api/productApi';
-import ProductForm from '../components/ProductForm';
 
+const ProductForm = lazy(() => import('../components/ProductForm'));
 const DEFAULT_CATEGORY_ID = 'c45eca94-70ef-4264-8714-df482e3d0eff';
 
 // set default image incase of the user did not add url
@@ -13,25 +14,37 @@ const DEFAULT_IMAGES = [
 ];
 
 function AddEdit(props) {
+  console.log(props);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  const location = useLocation();
 
-  // edit mode will bind the data to the form
   useEffect(() => {
-    if (props.location?.state?.product) {
-      setSelectedProduct({
-        name: '',
-        shortDescription: '',
-        description: '',
-        originalPrice: 0,
-        salePrice: 0,
-        isPromotion: '0',
-        promotionPercent: 0,
-        isFreeShip: 'false',
-        images: [],
-        ...props.location?.state?.product,
-      });
+    // on edit product
+    if (location?.productId) {
+      (async () => {
+        try {
+          // setLoading(true);
+          const data = await productApi.getById(location.productId);
+          setSelectedProduct({
+            name: '',
+            shortDescription: '',
+            description: '',
+            originalPrice: 0,
+            salePrice: 0,
+            isPromotion: '0',
+            promotionPercent: 0,
+            isFreeShip: 'false',
+            images: [],
+            ...data,
+          });
+          // setLoading(false);
+        } catch (error) {
+          console.log(`Failed to fetch a product detail for editing: ${error} `);
+        }
+      })();
     }
-  }, [props.location?.state?.product]);
+  }, [location?.productId]);
 
   const handleFormSubmit = async (formValues) => {
     const isAdd = !selectedProduct;
@@ -79,7 +92,7 @@ function AddEdit(props) {
         images: listImage,
       };
       await productApi.update(payload);
-      selectedProduct(null);
+      setSelectedProduct(null);
     } catch (error) {
       console.log('Failed to update product', error);
     }
@@ -87,18 +100,9 @@ function AddEdit(props) {
 
   return (
     <Box m={5}>
-      {props.location.state.addMode && (
-        <Typography component="h2" variant="h5">
-          Add new product
-        </Typography>
-      )}
-
-      {props.location.state.editMode && (
-        <Typography component="h2" variant="h5">
-          Editing product
-        </Typography>
-      )}
-
+      <Typography component="h2" variant="h5">
+        Add new product
+      </Typography>
       <ProductForm onSubmit={handleFormSubmit} initialValues={selectedProduct} />
     </Box>
   );

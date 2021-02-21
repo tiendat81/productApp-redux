@@ -15,6 +15,7 @@ function ProductFeature() {
         <Switch>
           <Route exact path={match.path} component={ProductListPage} />
           <Route path={`${match.path}/addEditProduct`} component={AddEdit} />
+          <Route path={`${match.path}/addEditProduct/:productId`} component={AddEdit} />
           <Route path={`${match.path}/:productId`} component={ProductDetailPage} />
         </Switch>
       </Suspense>

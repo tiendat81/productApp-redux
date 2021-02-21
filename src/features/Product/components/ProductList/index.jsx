@@ -13,7 +13,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { currencyFormat } from 'utilities/currency';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,36 +32,17 @@ const useStyles = makeStyles((theme) => ({
 
 ProductList.propTypes = {
   productList: PropTypes.array,
-  onEdit: PropTypes.func,
   onRemove: PropTypes.func,
 };
 
 ProductList.defaultProps = {
   productList: [],
-  onEdit: null,
   onRemove: null,
 };
 
 function ProductList(props) {
   const classes = useStyles();
-  const { productList, onEdit, onRemove } = props;
-
-  const history = useHistory();
-
-  const onLinktoDetail = (productId) => {
-    history.push(`/products/${productId}`);
-  };
-
-  const onEditProduct = (product) => {
-    if (onEdit) {
-      onEdit(product);
-      history.push({
-        pathname: '/products/addEditProduct',
-        state: { product, editMode: true },
-      });
-    }
-  };
-
+  const { productList, onRemove } = props;
   const onRemoveProduct = (product) => {
     onRemove && onRemove(product);
   };
@@ -72,35 +53,45 @@ function ProductList(props) {
         {productList.map((product) => (
           <Grid key={product.id} item xs={12} sm={6} md={4} lg={3}>
             <Card>
-              <CardActionArea onClick={() => onLinktoDetail(product.id)}>
-                <CardMedia
-                  component="img"
-                  alt={product.name}
-                  height="140"
-                  image={product.images && product.images[0]}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h3">
-                    {product.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                    className={classes.cardDescription}
-                  >
-                    {product.shortDescription}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
+              <Link to={`/products/${product.id}`} style={{ textDecoration: 'none' }}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    alt={product.name}
+                    height="140"
+                    image={product.images && product.images[0]}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h3">
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                      className={classes.cardDescription}
+                    >
+                      {product.shortDescription}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Link>
               <Box pl={2}>
                 <span className={classes.salePrice}>{currencyFormat(product.salePrice)} ₫</span>
                 {product.promotionPercent > 0 && <span> -{product.promotionPercent}%</span>}
               </Box>
               <CardActions>
-                <Button size="small" color="primary" onClick={() => onEditProduct(product)}>
-                  Edit
-                </Button>
+                <Link
+                  to={{
+                    pathname: `/products/addEditProduct/${product.id}`,
+                    productId: product.id,
+                  }}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <Button size="small" color="primary">
+                    Edit
+                  </Button>
+                </Link>
                 <Button size="small" color="primary" onClick={() => onRemoveProduct(product)}>
                   Delete
                 </Button>

@@ -41,7 +41,7 @@ function CartList(props) {
       {cartItems.length === 0 ? (
         <Box display="flex" justifyContent="center" alignItems="flex-start" flexWrap="wrap" mt={5}>
           <Box>
-            <img height="200px" src={noCartItemImg} alt="noCartItemImg" />
+            <img height="auto" width="100%" src={noCartItemImg} alt="noCartItemImg" />
           </Box>
           <Box ml={3}>
             <Typography variant="h4">Your Cart is empty</Typography>

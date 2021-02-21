@@ -5,8 +5,8 @@ import { useRouteMatch } from 'react-router-dom';
 import productApi from '../../../api/productApi';
 import { addToCart } from '../../Cart/cartSlice';
 
-const Loading = lazy(() => import('../components/Loading'));
 const Product = lazy(() => import('../components/Product'));
+const Loading = lazy(() => import('components/Loading'));
 
 function ProductDetailPage() {
   const { params } = useRouteMatch();

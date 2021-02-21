@@ -43,10 +43,14 @@ function ImageField(props) {
             label="Image url"
             defaultValue={field.image}
             form={form}
+            size="small"
           />
-
+          <span>
+            <i>E.g: {'https://media3.scdn.vn/img2/2018/1_18/nZectg.jpg'}</i>
+          </span>
+          <br />
           <Button
-            variant="contained"
+            variant="outlined"
             color="secondary"
             style={{ marginTop: '16px' }}
             onClick={() => remove(idx)}

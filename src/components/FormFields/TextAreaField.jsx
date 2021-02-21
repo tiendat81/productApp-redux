@@ -42,6 +42,7 @@ function TextAreaField(props) {
             helperText={errorMessage}
             multiline
             rows={3}
+            size="small"
           />
         )}
       />

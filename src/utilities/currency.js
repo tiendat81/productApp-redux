@@ -1,1 +1,2 @@
-export const currencyFormat = (cash) => cash.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+export const currencyFormat = (currency) =>
+  currency.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');

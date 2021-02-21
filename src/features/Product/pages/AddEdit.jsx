@@ -1,8 +1,9 @@
 import { Box, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import productApi from '../../../api/productApi';
-import ProductForm from '../components/ProductForm';
 
+const ProductForm = lazy(() => import('../components/ProductForm'));
 const DEFAULT_CATEGORY_ID = 'c45eca94-70ef-4264-8714-df482e3d0eff';
 
 // set default image incase of the user did not add url
@@ -13,30 +14,46 @@ const DEFAULT_IMAGES = [
 ];
 
 function AddEdit(props) {
+  console.log(props);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  const location = useLocation();
 
-  // edit mode will bind the data to the form
   useEffect(() => {
-    if (props.location?.state?.product) {
-      setSelectedProduct({
-        name: '',
-        shortDescription: '',
-        description: '',
-        originalPrice: 0,
-        salePrice: 0,
-        images: [],
-        ...props.location?.state?.product,
-      });
+    // on edit product
+    if (location?.productId) {
+      (async () => {
+        try {
+          // setLoading(true);
+          const data = await productApi.getById(location.productId);
+          setSelectedProduct({
+            name: '',
+            shortDescription: '',
+            description: '',
+            originalPrice: 0,
+            salePrice: 0,
+            isPromotion: '0',
+            promotionPercent: 0,
+            isFreeShip: 'false',
+            images: [],
+            ...data,
+          });
+          // setLoading(false);
+        } catch (error) {
+          console.log(`Failed to fetch a product detail for editing: ${error} `);
+        }
+      })();
     }
-  }, [props.location?.state?.product]);
+  }, [location?.productId]);
 
   const handleFormSubmit = async (formValues) => {
     const isAdd = !selectedProduct;
+    // convert array object form field array images to single array for consistent with api
+    const listImage = formValues.images
+      ? formValues.images.map((image) => image.image)
+      : DEFAULT_IMAGES;
 
     if (isAdd) {
-      // convert array object images to single array
-      const listImage = formValues?.images ? formValues?.images.map((image) => image.image) : null;
-
       let payload = {
         id: new Date().getTime().toString(),
         name: formValues.name,
@@ -44,10 +61,12 @@ function AddEdit(props) {
         description: formValues.description,
         originalPrice: formValues.originalPrice,
         salePrice: formValues.salePrice,
-        isPromotion: 0,
-        promotionPercent: 0,
-        images: listImage || DEFAULT_IMAGES,
-        isFreeShip: false,
+        promotionPercent: formValues.promotionPercent,
+        // due to RadioField return string so that I have to parse to workaround
+        isFreeShip: formValues.isFreeShip === 'false' ? false : true,
+        // due to RadioField return string so that I have to parse to workaround
+        isPromotion: parseInt(formValues.isPromotion),
+        images: listImage,
         createdAt: new Date().getTime().toString(),
         updatedAt: new Date().getTime().toString(),
         categoryId: DEFAULT_CATEGORY_ID,
@@ -56,24 +75,34 @@ function AddEdit(props) {
       return;
     }
 
-    // todo : edit product
-    console.log('edit form', formValues);
+    // Edit mode
+    try {
+      let payload = {
+        id: selectedProduct.id,
+        name: formValues.name,
+        shortDescription: formValues.shortDescription,
+        description: formValues.description,
+        originalPrice: formValues.originalPrice,
+        salePrice: formValues.salePrice,
+        promotionPercent: formValues.promotionPercent,
+        // due to RadioField return string so that I have to parse to workaround
+        isFreeShip: formValues.isFreeShip === 'false' ? false : true,
+        // due to RadioField return string so that I have to parse to workaround
+        isPromotion: parseInt(formValues.isPromotion),
+        images: listImage,
+      };
+      await productApi.update(payload);
+      setSelectedProduct(null);
+    } catch (error) {
+      console.log('Failed to update product', error);
+    }
   };
 
   return (
     <Box m={5}>
-      {props.location.state.addMode && (
-        <Typography component="h2" variant="h5">
-          Add new product
-        </Typography>
-      )}
-
-      {props.location.state.editMode && (
-        <Typography component="h2" variant="h5">
-          Editing product
-        </Typography>
-      )}
-
+      <Typography component="h2" variant="h5">
+        Add new product
+      </Typography>
       <ProductForm onSubmit={handleFormSubmit} initialValues={selectedProduct} />
     </Box>
   );

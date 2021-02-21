@@ -56,7 +56,7 @@ function RadioField(props) {
                 <FormControlLabel
                   key={option.value}
                   value={option.value}
-                  control={<Radio />}
+                  control={<Radio size="small" />}
                   label={option.label}
                   disabled={disabled}
                 />

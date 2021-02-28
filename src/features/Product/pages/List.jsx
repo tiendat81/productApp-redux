@@ -1,7 +1,7 @@
 import { Box, Button, ButtonGroup, Container, Tooltip } from '@material-ui/core';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import productApi from '../../../api/productApi';
 
 const AlertDialog = lazy(() => import('../components/AlertDialog'));
@@ -21,22 +21,21 @@ function ProductListPage() {
     priceLowToHigh: false,
   });
   const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
-
   const [pagination, setPagination] = useState({
     _page: 1,
     _limit: 8,
     _totalRows: 1,
   });
-
   const [filters, setFilters] = useState({
     _page: 1,
     _limit: 8,
     _sort: 'createdAt',
     _order: 'desc',
   });
-
   const { _limit, _totalRows } = pagination;
   const totalPages = Math.ceil(_totalRows / _limit);
+
+  const history = useHistory();
 
   const handlePageChange = (newPage) => {
     setFilters({
@@ -65,7 +64,6 @@ function ProductListPage() {
   };
 
   const handleSearch = (searchTerm) => {
-    console.log(searchTerm);
     setFilters({
       _page: 1,
       q: searchTerm.search,
@@ -73,6 +71,7 @@ function ProductListPage() {
     setSearchTerm({
       search: searchTerm.search,
     });
+    history.push(`?q=${searchTerm.search}`);
   };
 
   const handleSortCreatedAt = () => {
@@ -130,14 +129,16 @@ function ProductListPage() {
   }, [filters]);
 
   return (
-    <Container>
+    <Box>
       <Suspense fallback={<div>Loading...</div>}>
         {loading ? (
           <Loading />
         ) : (
-          <Box>
-            <Container>
-              <SearchForm onSubmit={handleSearch} initialValues={searchTerm} />
+          <Container>
+            <Box mt={5}>
+              <Box width="70%" margin="0 auto">
+                <SearchForm onSubmit={handleSearch} initialValues={searchTerm} />
+              </Box>
               <Box display="flex" justifyContent="center" mt={3} mb={3} flexWrap="wrap">
                 <Button disabled>Sort by: </Button>
                 <ButtonGroup color="primary" aria-label="outlined primary button group">
@@ -161,17 +162,17 @@ function ProductListPage() {
                   </Button>
                 </ButtonGroup>
                 <Box>
-                  <Tooltip title="Add a new product" placement="top">
+                  <Tooltip p={0} title="Add a new product" placement="top">
                     <Link to={'/products/addEditProduct'} style={{ textDecoration: 'none' }}>
-                      {<AddBoxOutlinedIcon fontSize="large" />}
+                      <AddBoxOutlinedIcon fontSize="large" color="action" />
                     </Link>
                   </Tooltip>
                 </Box>
               </Box>
-            </Container>
+            </Box>
             <ProductList productList={productList} onRemove={handleRemoveClick} />
             <AlertDialog open={open} onAccept={handleRemoveSubmit} onClose={handleCloseDialog} />
-            {productList.length < 1 && <h5>No produect found</h5>}
+            {productList.length < 1 && <h5>No product found</h5>}
             <Box display="flex" justifyContent="center">
               <ProductPagination
                 totalPages={totalPages}
@@ -179,10 +180,10 @@ function ProductListPage() {
                 onPageChange={handlePageChange}
               />
             </Box>
-          </Box>
+          </Container>
         )}
       </Suspense>
-    </Container>
+    </Box>
   );
 }
 

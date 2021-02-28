@@ -6,7 +6,6 @@ import {
   CardActions,
   CardContent,
   CardMedia,
-  Container,
   Grid,
   Typography,
 } from '@material-ui/core';
@@ -14,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { currencyFormat } from 'utilities/currency';
+import { currencyFormat, randomImage } from 'utilities/common';
 
 const useStyles = makeStyles((theme) => ({
   cardDescription: {
@@ -44,11 +43,11 @@ function ProductList(props) {
   const classes = useStyles();
   const { productList, onRemove } = props;
   const onRemoveProduct = (product) => {
-    onRemove && onRemove(product);
+    onRemove?.(product);
   };
 
   return (
-    <Container>
+    <Box>
       <Grid container spacing={1}>
         {productList.map((product) => (
           <Grid key={product.id} item xs={12} sm={6} md={4} lg={3}>
@@ -58,8 +57,7 @@ function ProductList(props) {
                   <CardMedia
                     component="img"
                     alt={product.name}
-                    height="140"
-                    image={product.images && product.images[0]}
+                    image={product?.images && randomImage(product.images)}
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h3">
@@ -100,7 +98,7 @@ function ProductList(props) {
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </Box>
   );
 }
 

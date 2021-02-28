@@ -1,10 +1,9 @@
-import { Box, Typography } from '@material-ui/core';
+import { Box, Container, Typography } from '@material-ui/core';
 import React, { lazy, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import productApi from '../../../api/productApi';
 
 const ProductForm = lazy(() => import('../components/ProductForm'));
-const DEFAULT_CATEGORY_ID = 'c45eca94-70ef-4264-8714-df482e3d0eff';
 
 // set default image incase of the user did not add url
 // need to find another solution
@@ -14,17 +13,14 @@ const DEFAULT_IMAGES = [
 ];
 
 function AddEdit(props) {
-  console.log(props);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  // const [loading, setLoading] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    // on edit product
+    // edit product mode
     if (location?.productId) {
       (async () => {
         try {
-          // setLoading(true);
           const data = await productApi.getById(location.productId);
           setSelectedProduct({
             name: '',
@@ -36,11 +32,11 @@ function AddEdit(props) {
             promotionPercent: 0,
             isFreeShip: 'false',
             images: [],
+            categoryId: '',
             ...data,
           });
-          // setLoading(false);
         } catch (error) {
-          console.log(`Failed to fetch a product detail for editing: ${error} `);
+          console.log(`Failed to fetch product detail for editing: ${error} `);
         }
       })();
     }
@@ -48,13 +44,11 @@ function AddEdit(props) {
 
   const handleFormSubmit = async (formValues) => {
     const isAdd = !selectedProduct;
-    // convert array object form field array images to single array for consistent with api
-    const listImage = formValues.images
-      ? formValues.images.map((image) => image.image)
-      : DEFAULT_IMAGES;
+    // convert array object form field to flat array (consistent with api returns)
+    const imageList = formValues?.images ? formValues.images.map((x) => x.image) : DEFAULT_IMAGES;
 
     if (isAdd) {
-      let payload = {
+      const payload = {
         id: new Date().getTime().toString(),
         name: formValues.name,
         shortDescription: formValues.shortDescription,
@@ -66,10 +60,10 @@ function AddEdit(props) {
         isFreeShip: formValues.isFreeShip === 'false' ? false : true,
         // due to RadioField return string so that I have to parse to workaround
         isPromotion: parseInt(formValues.isPromotion),
-        images: listImage,
+        images: imageList,
         createdAt: new Date().getTime().toString(),
         updatedAt: new Date().getTime().toString(),
-        categoryId: DEFAULT_CATEGORY_ID,
+        categoryId: formValues.categoryId,
       };
       await productApi.add(payload);
       return;
@@ -77,7 +71,7 @@ function AddEdit(props) {
 
     // Edit mode
     try {
-      let payload = {
+      const payload = {
         id: selectedProduct.id,
         name: formValues.name,
         shortDescription: formValues.shortDescription,
@@ -89,7 +83,9 @@ function AddEdit(props) {
         isFreeShip: formValues.isFreeShip === 'false' ? false : true,
         // due to RadioField return string so that I have to parse to workaround
         isPromotion: parseInt(formValues.isPromotion),
-        images: listImage,
+        images: imageList,
+        updatedAt: new Date().getTime().toString(),
+        categoryId: formValues.categoryId,
       };
       await productApi.update(payload);
       setSelectedProduct(null);
@@ -99,12 +95,14 @@ function AddEdit(props) {
   };
 
   return (
-    <Box m={5}>
-      <Typography component="h2" variant="h5">
-        Add new product
-      </Typography>
-      <ProductForm onSubmit={handleFormSubmit} initialValues={selectedProduct} />
-    </Box>
+    <Container>
+      <Box mt={5} mb={3}>
+        <Typography component="h2" variant="h5">
+          {!!selectedProduct ? 'Edit product' : 'Add new product'}
+        </Typography>
+        <ProductForm onSubmit={handleFormSubmit} initialValues={selectedProduct} />
+      </Box>
+    </Container>
   );
 }
 

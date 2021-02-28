@@ -22,7 +22,7 @@ AlertDialog.defaultProps = {
 
 function AlertDialog({ open, onAccept, onClose }) {
   const handleClose = () => {
-    onClose && onClose();
+    onClose?.();
   };
 
   return (
@@ -46,7 +46,7 @@ function AlertDialog({ open, onAccept, onClose }) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={() => onAccept && onAccept()} color="primary" autoFocus>
+          <Button onClick={() => onAccept?.()} color="primary" autoFocus>
             Delete
           </Button>
         </DialogActions>

@@ -4,7 +4,9 @@ import ImageField from 'components/FormFields/ImageField';
 import InputField from 'components/FormFields/InputField';
 import InputNumberField from 'components/FormFields/InputNumberField';
 import RadioField from 'components/FormFields/RadioField';
+import SelectField from 'components/FormFields/SelectField';
 import TextAreaField from 'components/FormFields/TextAreaField';
+import { categoryList } from 'constants/common';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,37 +24,30 @@ ProductForm.defaultProps = {
 
 function ProductForm({ initialValues, onSubmit }) {
   const schema = yup.object().shape({
-    name: yup.string('Accept string only').required('Please enter a product name'),
-    shortDescription: yup
-      .string('Accept string only')
-      .required('Please enter a product short description'),
-    description: yup.string('Accept string only').required('Please enter a product description'),
+    name: yup.string().required('Product name is required.'),
+    shortDescription: yup.string().required('Short description is required.'),
+    description: yup.string().required('Description is required.'),
     originalPrice: yup
       .number()
-      .typeError('Price must be a number')
-      .positive('Price must be greater than zero')
-      .required('Price is required'),
+      .min(0, 'Price must be equal or greater than zero.')
+      .typeError('Price is required.'),
     salePrice: yup
       .number()
-      .typeError('Sale price must be a number')
-      .positive('Sale price must be greater than zero')
-      .required('Sale price is required'),
+      .typeError('Sale price is required.')
+      .min(0, 'Sale price must be equal or greater than zero.'),
     isPromotion: yup.string(),
     promotionPercent: yup
       .number()
-      .max(100, 'Promotion Percent must be less than or equal to 100')
-      .typeError('Promotion Percent must be a number')
-      .positive('Promotion Percent must be equal or greater than zero')
-      .required('Promotion Percent is required'),
+      .min(0, 'Promotion percent must be equal or greater than zero.')
+      .max(100, 'Promotion percent must be less than or equal to 100.')
+      .typeError('Promotion percent is required.'),
     isFreeShip: yup.string(),
     images: yup.array().of(
       yup.object().shape({
-        image: yup
-          .string()
-          .url('Please enter the right url')
-          .required('Please enter url for image'),
+        image: yup.string().url('Please enter the right URL.').required('URL is required.'),
       })
     ),
+    categoryId: yup.string().required('Category is required.'),
   });
 
   const form = useForm({
@@ -67,6 +62,7 @@ function ProductForm({ initialValues, onSubmit }) {
       promotionPercent: 0,
       isFreeShip: 'false',
       images: [],
+      categoryId: '',
     },
     resolver: yupResolver(schema),
   });
@@ -74,22 +70,23 @@ function ProductForm({ initialValues, onSubmit }) {
   const { setValue } = form;
 
   useEffect(() => {
-    // field array need an array object, but images return a flat array so that convert flat array to array object
+    // field array needs an array object, but image list returns a flat array so that convert it to an array object
     const convertFlatImageArrayToArrayObj = () => {
       let imageList = [];
       imageList = initialValues.images.map((image) => ({ image: image }));
       return imageList;
     };
 
-    setValue('name', initialValues ? initialValues.name : '');
+    setValue('name', initialValues?.name || '');
     setValue('shortDescription', initialValues?.shortDescription || '');
     setValue('description', initialValues?.description || '');
     setValue('originalPrice', initialValues?.originalPrice || 0);
     setValue('salePrice', initialValues?.salePrice || 0);
     setValue('promotionPercent', initialValues?.promotionPercent || 0);
-    setValue('isPromotion', initialValues?.isPromotion.toString() || '0');
-    setValue('isFreeShip', initialValues?.isFreeShip.toString() || 'false');
+    setValue('isPromotion', initialValues?.isPromotion?.toString() || '0');
+    setValue('isFreeShip', initialValues?.isFreeShip?.toString() || 'false');
     setValue('images', initialValues?.images ? convertFlatImageArrayToArrayObj() : [{}]);
+    setValue('categoryId', initialValues?.categoryId || '');
   }, [initialValues, setValue]);
 
   const handleFormSubmit = async (values) => {
@@ -163,13 +160,22 @@ function ProductForm({ initialValues, onSubmit }) {
           { value: 'false', label: 'No' },
         ]}
       />
+      <SelectField
+        name="categoryId"
+        label="Category"
+        form={form}
+        options={categoryList.map((category) => ({
+          value: category.categoryId,
+          label: category.name,
+        }))}
+      />
       <Button
         disabled={isSubmitting || !isValid || isValidating}
         type="submit"
         color="primary"
         variant="contained"
       >
-        Submit
+        {initialValues ? 'Update' : 'Add'}
       </Button>
     </Box>
   );

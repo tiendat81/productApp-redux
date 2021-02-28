@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@material-ui/core';
-import SearchField from 'components/FormFields/SearchField';
+import InputField from 'components/FormFields/InputField';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -42,7 +42,7 @@ function SearchForm({ initialValues, onSubmit }) {
       autoComplete="off"
       onSubmit={form.handleSubmit(handleFormSubmit)}
     >
-      <SearchField name="search" label="Seach" form={form} />
+      <InputField name="search" label="Seach product..." form={form} />
     </Box>
   );
 }

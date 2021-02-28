@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import { currencyFormat } from 'utilities/currency';
+import { currencyFormat } from 'utilities/common';
 
 Product.propTypes = {
   product: PropTypes.object,
@@ -44,31 +44,24 @@ function Product(props) {
   const classes = useStyles();
 
   const onIncreaseProductClick = () => {
-    increaseProduct && increaseProduct();
+    increaseProduct?.();
   };
 
   const onDecreaseProductClick = () => {
-    decreaseProduct && decreaseProduct();
+    decreaseProduct?.();
   };
 
   return (
     <Container>
       <Box mt={5}>
-        <Grid container spacing={0}>
+        <Grid container spacing={1}>
           <Grid item xs={12} sm={6} md={6}>
             <Box className={classes.root}>
               <Card>
                 <CardActionArea>
                   <Carousel animation="slide" autoPlay={false}>
                     {product.images.map((image, i) => (
-                      <CardMedia
-                        key={i}
-                        component="img"
-                        alt="Image"
-                        height="auto"
-                        image={image}
-                        title="Image"
-                      />
+                      <CardMedia key={i} component="img" alt="Image" image={image} title="Image" />
                     ))}
                   </Carousel>
                 </CardActionArea>

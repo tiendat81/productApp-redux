@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Container, Tooltip } from '@material-ui/core';
+import { Box, Button, ButtonGroup, Container, Tooltip, Typography } from '@material-ui/core';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -172,7 +172,7 @@ function ProductListPage() {
             </Box>
             <ProductList productList={productList} onRemove={handleRemoveClick} />
             <AlertDialog open={open} onAccept={handleRemoveSubmit} onClose={handleCloseDialog} />
-            {productList.length < 1 && <h5>No product found</h5>}
+            {productList.length < 1 && <Typography variant="h5">No product found</Typography>}
             <Box display="flex" justifyContent="center">
               <ProductPagination
                 totalPages={totalPages}

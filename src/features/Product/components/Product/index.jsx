@@ -60,7 +60,7 @@ function Product(props) {
               <Card>
                 <CardActionArea>
                   <Carousel animation="slide" autoPlay={false}>
-                    {product.images.map((image, i) => (
+                    {(product?.images || []).map((image, i) => (
                       <CardMedia key={i} component="img" alt="Image" image={image} title="Image" />
                     ))}
                   </Carousel>

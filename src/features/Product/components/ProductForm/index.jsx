@@ -70,22 +70,15 @@ function ProductForm({ initialValues, onSubmit }) {
   const { setValue } = form;
 
   useEffect(() => {
-    // field array needs an array object, but image list returns a flat array so that convert it to an array object
-    const convertFlatImageArrayToArrayObj = () => {
-      let imageList = [];
-      imageList = initialValues.images.map((image) => ({ image: image }));
-      return imageList;
-    };
-
     setValue('name', initialValues?.name || '');
     setValue('shortDescription', initialValues?.shortDescription || '');
     setValue('description', initialValues?.description || '');
     setValue('originalPrice', initialValues?.originalPrice || 0);
     setValue('salePrice', initialValues?.salePrice || 0);
     setValue('promotionPercent', initialValues?.promotionPercent || 0);
-    setValue('isPromotion', initialValues?.isPromotion?.toString() || '0');
-    setValue('isFreeShip', initialValues?.isFreeShip?.toString() || 'false');
-    setValue('images', initialValues?.images ? convertFlatImageArrayToArrayObj() : [{}]);
+    setValue('isPromotion', initialValues?.isPromotion || '0');
+    setValue('isFreeShip', initialValues?.isFreeShip || 'false');
+    setValue('images', initialValues?.images || [{}]);
     setValue('categoryId', initialValues?.categoryId || '');
   }, [initialValues, setValue]);
 

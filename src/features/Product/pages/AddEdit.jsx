@@ -16,8 +16,10 @@ function AddEdit(props) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const location = useLocation();
 
+  // convert flat array to array obj to use in field array
+  const convertFlatImageArrayToArrayObj = (images) => images.map((image) => ({ image: image }));
+
   useEffect(() => {
-    // edit product mode
     if (location?.productId) {
       (async () => {
         try {
@@ -28,12 +30,12 @@ function AddEdit(props) {
             description: '',
             originalPrice: 0,
             salePrice: 0,
-            isPromotion: '0',
             promotionPercent: 0,
-            isFreeShip: 'false',
-            images: [],
             categoryId: '',
             ...data,
+            images: data?.images ? convertFlatImageArrayToArrayObj(data.images) : [],
+            isPromotion: data.isPromotion.toString(),
+            isFreeShip: data.isPromotion === false ? 'false' : 'true',
           });
         } catch (error) {
           console.log(`Failed to fetch product detail for editing: ${error} `);

@@ -42,6 +42,10 @@ function ProductListPage() {
       ...filters,
       _page: newPage,
     });
+
+    history.push(
+      `/products?_page=${newPage}&_limit=${filters._limit}&_sort=${filters._sort}&_order=${filters._order}`
+    );
   };
 
   const handleRemoveClick = async (product) => {

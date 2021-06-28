@@ -58,6 +58,7 @@ function ProductList(props) {
                     component="img"
                     alt={product.name}
                     image={product?.images && randomImage(product.images)}
+                    height="250px"
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h3">

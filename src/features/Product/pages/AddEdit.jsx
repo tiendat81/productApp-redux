@@ -2,6 +2,7 @@ import { Box, Container, Typography } from '@material-ui/core';
 import React, { lazy, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import productApi from '../../../api/productApi';
+import { makeStyles } from '@material-ui/core/styles';
 
 const ProductForm = lazy(() => import('../components/ProductForm'));
 
@@ -12,7 +13,24 @@ const DEFAULT_IMAGES = [
   'https://media3.scdn.vn/img2/2018/1_18/nZectg.jpg',
 ];
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: theme.spacing(1),
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '50%',
+    },
+    [theme.breakpoints.up('lg')]: {
+      width: '50%',
+    },
+    margin: '0 auto',
+  },
+}));
+
 function AddEdit(props) {
+  const classes = useStyles();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const location = useLocation();
 
@@ -97,14 +115,14 @@ function AddEdit(props) {
   };
 
   return (
-    <Container>
-      <Box mt={5} mb={3}>
+    <Box width="100%">
+      <Box className={classes.root} mt={5} mb={3}>
         <Typography component="h2" variant="h5">
           {!!selectedProduct ? 'Edit product' : 'Add new product'}
         </Typography>
         <ProductForm onSubmit={handleFormSubmit} initialValues={selectedProduct} />
       </Box>
-    </Container>
+    </Box>
   );
 }
 

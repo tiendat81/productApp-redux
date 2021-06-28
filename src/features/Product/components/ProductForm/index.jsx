@@ -105,7 +105,13 @@ function ProductForm({ initialValues, onSubmit }) {
         label="Product short description"
         form={form}
       />
-      <TextAreaField name="description" type="text" label="Product description" form={form} />
+      <TextAreaField
+        name="description"
+        type="text"
+        label="Product description"
+        rowsMax={5}
+        form={form}
+      />
       <InputNumberField
         name="originalPrice"
         type="number"

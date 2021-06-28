@@ -1,3 +1,4 @@
+import { Box } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -34,8 +35,10 @@ function AlertDialog({ open, onAccept, onClose }) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          <WarningRoundedIcon />
-          {'Warning!'}
+          <Box display="flex" justifyItems="flex-end" alignItems="center">
+            <WarningRoundedIcon />
+            <Box>Warning!</Box>
+          </Box>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

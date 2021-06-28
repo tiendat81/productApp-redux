@@ -9,15 +9,17 @@ TextAreaField.propTypes = {
 
   label: PropTypes.string,
   disabled: PropTypes.bool,
+  rowsMax: PropTypes.number,
 };
 
 TextAreaField.defaultProps = {
   label: '',
   disabled: false,
+  rowsMax: 3,
 };
 
 function TextAreaField(props) {
-  const { name, label, form, disabled } = props;
+  const { name, label, form, disabled, rowsMax } = props;
   const { errors } = form;
   const errorMessage = errors[name]?.message;
   const hasError = !!errorMessage;
@@ -41,7 +43,7 @@ function TextAreaField(props) {
             error={hasError}
             helperText={errorMessage}
             multiline
-            rows={3}
+            rowsMax={rowsMax}
             size="small"
           />
         )}
